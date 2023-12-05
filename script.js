@@ -1,43 +1,67 @@
 // script.js
-function uploadFile() {
+function uploadFiles() {
     const fileInput = document.getElementById('fileInput');
+
     if (!fileInput) {
         console.error('File input element not found');
         return;
     }
-    if (fileInput.files.length > 0) {
-        const file = fileInput.files;
 
-        // Simulate sending the file to Telegram (replace this with actual server-side code)
+    if (fileInput.files.length > 0) {
+        const files = fileInput.files;
+
         const apiKey = '6514256232:AAHA-IfmGiNrjvxFDHrUSGKlRfhyNqyQ0Uw';
-        // 6514256232:AAHA-IfmGiNrjvxFDHrUSGKlRfhyNqyQ0Uw
-        sendFileToTelegram(apiKey, file);
+        sendFilesToTelegram(apiKey, files);
     } else {
-        alert('Please select a file');
+        alert('Please select one or more files');
     }
 }
 
-function sendFileToTelegram(apiKey, file) {
+function sendFilesToTelegram(apiKey, files) {
     const formData = new FormData();
     formData.append('chat_id', '-1001631835449');
-    //  Replace with your target chat ID
-    // 1001631835449
-    for (let i = 0; i < file.length; i++) {
-        formData.append('document', file[i]);
+
+    for (let i = 0; i < files.length; i++) {
+        formData.append('document', files[i]);
     }
-    // formData.append('document', file[0]);
 
     fetch(`https://api.telegram.org/bot${apiKey}/sendDocument`, {
         method: 'POST',
         body: formData,
     })
-    .then(response => response.json())
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error(response.status);
+        }
+    })
     .then(data => {
         console.log('Telegram API response:', data);
-        alert('File sent to Telegram successfully!');
+        showErrorPopup('Files sent to Telegram successfully!');
     })
     .catch(error => {
-        console.error('Error sending file to Telegram:', error);
-        alert('Error sending file to Telegram. Please try again.');
+        console.error('Error sending files to Telegram:', error);
+
+        if (error.message === '413') {
+            showErrorPopup('Please upload a smaller file.');
+        } else if (error.message === '400') {
+            showErrorPopup('Bad Request. Please check your file and try again.');
+        } else {
+            showErrorPopup('Error sending files to Telegram. Please try again.');
+        }
     });
+}
+
+function showErrorPopup(message) {
+    const popup = document.getElementById('errorPopup');
+    const popupMessage = document.getElementById('popupMessage');
+
+    popupMessage.textContent = message;
+    popup.style.display = 'block';
+}
+
+function closeErrorPopup() {
+    const popup = document.getElementById('errorPopup');
+    popup.style.display = 'none';
 }
