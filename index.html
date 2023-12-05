@@ -1,0 +1,26 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload to Telegram</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="shortcut icon" href="https://harshilchovatiya.github.io/images/android-chrome-192x192.png"
+        type="image/png">
+</head>
+<body>
+
+<div class="container">
+    <input type="file" id="fileInput" multiple />
+    <button onclick="uploadFile()">Upload to Telegram</button>
+</div>
+<div id="errorPopup" class="popup">
+    <span class="popup-content" id="popupMessage"></span>
+    <span class="popup-close" onclick="closeErrorPopup()">&times;</span>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
+<!-- 'chat_id', '-1001631835449' -->
+<!-- apiKey = '6514256232:AAHA-IfmGiNrjvxFDHrUSGKlRfhyNqyQ0Uw'; -->
