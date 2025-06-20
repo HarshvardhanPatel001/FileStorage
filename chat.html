@@ -1,20 +1,78 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8" />
-    <style>
-      body {
-        background-color: #121926;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>ElevenLabs Widget</title>
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      background-color: #121926;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    elevenlabs-convai {
+      transform: scale(2.2);
+      transform-origin: center;
+      position: relative;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <div id="widget-container"></div>
+
+  <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async></script>
+  <script>
+    const DEFAULT_AGENT_ID = "agent_01jw67cvkxe6vvk1rnnyvh4xj7";
+
+    const getQueryParam = (key) => {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(key);
+    };
+
+    const agentId = getQueryParam("agent") || DEFAULT_AGENT_ID;
+
+    // Create and inject the widget
+    const widget = document.createElement("elevenlabs-convai");
+    widget.setAttribute("agent-id", agentId);
+    document.getElementById("widget-container").appendChild(widget);
+
+    // Optional: Fix overlay position
+    const fixOverlay = () => {
+      const widget = document.querySelector("elevenlabs-convai");
+      if (!widget?.shadowRoot) return;
+
+      const overlays = widget.shadowRoot.querySelectorAll(".overlay");
+      overlays.forEach(overlay => {
+        overlay.style.display = 'flex';
+        overlay.style.position = 'relative';
+        overlay.style.justifyContent = 'center';
+        overlay.style.alignItems = 'center';
+        overlay.style.bottom = 'unset';
+        overlay.style.right = 'unset';
+        overlay.style.left = 'unset';
+        overlay.style.top = 'unset';
+        overlay.style.margin = '0 auto';
+      });
+
+      const labels = widget.shadowRoot.querySelectorAll("p");
+      labels.forEach(p => {
+        if (p.textContent?.includes("Powered by ElevenLabs")) {
+          p.style.display = "none";
+        }
+      });
+    };
+
+    const interval = setInterval(() => {
+      const widget = document.querySelector("elevenlabs-convai");
+      if (widget?.shadowRoot?.querySelector(".overlay")) {
+        clearInterval(interval);
+        fixOverlay();
       }
-    </style>
-  </head>
-  <body>
-    <elevenlabs-convai agent-id="agent_01jw67cvkxe6vvk1rnnyvh4xj7"></elevenlabs-convai>
-    <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async></script>
-  </body>
+    }, 100);
+  </script>
+</body>
 </html>
